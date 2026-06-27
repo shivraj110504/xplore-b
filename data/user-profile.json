@@ -1,0 +1,177 @@
+{
+  "personalInfo": {
+    "name": "Shivaraj Taware",
+    "email": "shivarajtaware7192@gmail.com",
+    "phone": "+91-9322408510",
+    "location": "Pune, Maharashtra, India",
+    "linkedin": "linkedin.com/in/shivrajtaware",
+    "github": "github.com/shivraj110504",
+    "portfolio": "shivrajtaware.in"
+  },
+  "preferences": {
+    "preferredRoles": [
+      "Full Stack Developer",
+      "Backend Developer",
+      "Software Engineer",
+      "Frontend Developer",
+      "Node.js Developer",
+      "NestJS Developer"
+    ],
+    "preferredLocations": [
+      "Pune",
+      "Mumbai",
+      "Bengaluru",
+      "Bangalore",
+      "Remote",
+      "Hybrid",
+      "India"
+    ],
+    "jobTypes": [
+      "Internship",
+      "Full Time"
+    ]
+  },
+  "experience": {
+    "totalExperienceYears": 1,
+    "currentRole": "Full Stack Developer Intern",
+    "currentCompany": "Poonawalla Fincorp Ltd.",
+    "workMode": "Onsite",
+    "startDate": "2026-02",
+    "skillsUsed": [
+      "React.js",
+      "Next.js",
+      "NestJS",
+      "AWS",
+      "REST APIs",
+      "MongoDB"
+    ]
+  },
+  "skills": {
+    "languages": [
+      "Java",
+      "C++",
+      "JavaScript",
+      "TypeScript"
+    ],
+    "frontend": [
+      "React.js",
+      "Next.js",
+      "HTML",
+      "CSS",
+      "Tailwind CSS"
+    ],
+    "backend": [
+      "Node.js",
+      "NestJS",
+      "REST APIs",
+      "Flask"
+    ],
+    "databases": [
+      "MongoDB",
+      "MySQL",
+      "Supabase"
+    ],
+    "tools": [
+      "Git",
+      "GitHub",
+      "AWS",
+      "VS Code"
+    ],
+    "additional": [
+      "Python",
+      "AI Integration",
+      "Document Processing",
+      "Authentication",
+      "API Development"
+    ]
+  },
+  "projects": [
+    {
+      "name": "NyaySetu AI",
+      "type": "Legal AI Assistant",
+      "techStack": [
+        "Flask",
+        "Next.js",
+        "Python",
+        "MongoDB"
+      ],
+      "description": [
+        "Built AI-powered legal assistant",
+        "Generated legal documents",
+        "Designed backend APIs",
+        "Built document processing workflows"
+      ]
+    },
+    {
+      "name": "MediCare",
+      "type": "Healthcare Platform",
+      "techStack": [
+        "React",
+        "Flask",
+        "Python",
+        "JavaScript",
+        "Supabase"
+      ],
+      "description": [
+        "Built healthcare platform",
+        "Implemented authentication",
+        "Built APIs",
+        "Implemented appointment booking system"
+      ]
+    }
+  ],
+  "education": {
+    "degree": "B.E. Information Technology",
+    "college": "Sinhgad Academy of Engineering, Pune",
+    "cgpa": 8.02,
+    "startYear": 2023,
+    "endYear": 2027
+  },
+  "achievements": [
+    {
+      "title": "IEM Hackathon",
+      "year": 2025,
+      "description": "Top 5 among 450+ teams"
+    },
+    {
+      "title": "Spectrum Dark VS Code Theme",
+      "year": 2025,
+      "description": "Designed and published VS Code theme"
+    },
+    {
+      "title": "Research Paper - Siren Swift Traffic Solutions",
+      "year": 2024,
+      "description": "Contributed to intelligent traffic system"
+    }
+  ],
+  "leadership": [
+    {
+      "role": "Hackathon Head",
+      "organization": "Cypher Cell",
+      "startYear": 2024,
+      "description": "Organized hackathons for 400+ participants"
+    }
+  ],
+  "matchingConfig": {
+    "prioritySkills": [
+      "NestJS",
+      "Node.js",
+      "React.js",
+      "Next.js",
+      "MongoDB",
+      "TypeScript"
+    ],
+    "excludedKeywords": [
+      "Senior",
+      "7+ years",
+      "Staff Engineer",
+      "Principal Engineer"
+    ],
+    "minimumMatchScore": 60
+  },
+  "metadata": {
+    "createdAt": "2026-05-08T23:00:00Z",
+    "updatedAt": "2026-05-08T23:00:00Z",
+    "source": "resume"
+  }
+}
