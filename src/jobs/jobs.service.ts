@@ -15,9 +15,9 @@ export class JobsService {
     private readonly mailService: MailService,
   ) {}
 
-  async fetchAndMatchJobs(): Promise<{ message?: string; jobs: MatchedJob[] }> {
+  async fetchAndMatchJobs(userEmail?: string, userName?: string): Promise<{ message?: string; jobs: MatchedJob[] }> {
     try {
-      this.logger.log('Starting job aggregation process...');
+      this.logger.log(`Starting job aggregation process for ${userEmail || 'unknown'}...`);
 
       // Fallback 60s timeout in case Python script hangs completely
       let timeoutHandle: NodeJS.Timeout;
@@ -68,9 +68,12 @@ export class JobsService {
 
       // 7. Send email
       if (matchedJobs.length > 0) {
+        const finalEmail = userEmail || userProfile.personalInfo.email;
+        const finalName = userName || userProfile.personalInfo.name;
+        
         await this.mailService.sendJobAlert(
-          userProfile.personalInfo.email,
-          userProfile.personalInfo.name,
+          finalEmail,
+          finalName,
           matchedJobs,
         );
       }

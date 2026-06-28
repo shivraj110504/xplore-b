@@ -14,6 +14,16 @@ async function bootstrap() {
   });
 
   app.setGlobalPrefix('api');
+
+  // Intercept the root URL to return a friendly status message instead of 404
+  app.getHttpAdapter().get('/', (req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      message: 'HireXplore Backend is running perfectly!',
+      timestamp: new Date().toISOString()
+    });
+  });
+
   app.useGlobalFilters(new HttpExceptionFilter());
 
   const config = new DocumentBuilder()

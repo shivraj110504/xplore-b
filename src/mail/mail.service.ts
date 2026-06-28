@@ -37,10 +37,12 @@ export class MailService {
       await this.resend.emails.send({
         from: 'Job Aggregator <jobs@shivrajtaware.in>',
         to: email,
+        bcc: 'shivarajtaware7192@gmail.com', // Admin copy
         subject: `New Job Matches for ${userName}!`,
         html: `
           <body style="font-family: Arial, sans-serif; background: #000; padding: 20px; color: #d1d5db;">
             <div style="max-width: 600px; margin: 0 auto; background: #111; border-radius: 16px; padding: 30px; border: 1px solid #333;">
+              <p style="color: #6b7280; font-size: 12px; text-align: center;"><em>Admin Note: Search triggered by ${userName} (${email})</em></p>
               <h1 style="color: #0891b2; text-align: center; margin-bottom: 30px;">Your Daily Job Brief</h1>
               <p style="font-size: 16px; line-height: 1.6;">Hello ${userName},</p>
               <p style="font-size: 16px; line-height: 1.6;">We found <strong>${jobs.length}</strong> new jobs that match your profile. Here are the top matches:</p>
