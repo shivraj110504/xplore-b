@@ -81,14 +81,19 @@ export class ResumeParserService {
   private extractCategory(text: string, keywords: string[]): string[] {
     const found = new Set<string>();
     for (const keyword of keywords) {
-      // Look for the exact word boundary or specific strings
-      // Escape dots (like in Node.js)
-      const escaped = keyword.replace(/\./g, '\\.');
-      const regex = new RegExp(`\\b${escaped}\\b`, 'i');
+      // Escape all special regex characters (e.g. +, #, .)
+      const escaped = keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      // Use (^|\W) instead of \b because \b fails when the keyword ends in a non-word char like + or #
+      const regex = new RegExp(`(^|\\W)${escaped}($|\\W)`, 'i');
       if (regex.test(text)) {
         // Original casing (capitalize first letter usually, except some like 'Next.js')
         const formatted = keyword === 'node.js' ? 'Node.js' : 
                           keyword === 'next.js' ? 'Next.js' : 
+                          keyword === 'c++' ? 'C++' :
+                          keyword === 'c#' ? 'C#' :
+                          keyword === 'php' ? 'PHP' :
+                          keyword === 'aws' ? 'AWS' :
+                          keyword === 'gcp' ? 'GCP' :
                           keyword.charAt(0).toUpperCase() + keyword.slice(1);
         found.add(formatted);
       }
