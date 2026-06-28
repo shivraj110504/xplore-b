@@ -28,7 +28,11 @@ MAX_OTHER_JOBS    = 15
 # ─── Paths ───────────────────────────────────────────────────────────────────
 SCRIPT_DIR   = os.path.dirname(os.path.abspath(__file__))
 DATA_DIR     = os.path.join(SCRIPT_DIR, '..', 'data')
-PROFILE_PATH = os.path.join(DATA_DIR, 'user-profile.json')
+
+if len(sys.argv) > 1:
+    PROFILE_PATH = sys.argv[1]
+else:
+    PROFILE_PATH = os.path.join(DATA_DIR, 'user-profile.json')
 
 # ─── India / Remote location gate ────────────────────────────────────────────
 INDIA_KEYWORDS = [

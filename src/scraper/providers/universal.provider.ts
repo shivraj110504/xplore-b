@@ -9,14 +9,14 @@ export class UniversalProvider {
   private readonly logger = new Logger(UniversalProvider.name);
   private activeScrapePromise: Promise<Job[]> | null = null;
 
-  async fetchJobs(): Promise<Job[]> {
+  async fetchJobs(tempFilePath?: string): Promise<Job[]> {
     if (this.activeScrapePromise) {
       this.logger.log('Scrape already in progress. Joining existing scrape pool...');
       return this.activeScrapePromise;
     }
 
     // 1. Run the Python scraper to get fresh jobs across all platforms
-    this.activeScrapePromise = this.runPythonScraper()
+    this.activeScrapePromise = this.runPythonScraper(tempFilePath)
       .catch((e) => {
         this.logger.error(`Failed to fetch universal jobs: ${e.message}`);
         return [];
@@ -32,14 +32,16 @@ export class UniversalProvider {
    * Spawns the Python scraper as a child process.
    * Resolves when the process exits (success or failure — we never block the pipeline).
    */
-  private runPythonScraper(): Promise<Job[]> {
+  private runPythonScraper(tempFilePath?: string): Promise<Job[]> {
     return new Promise((resolve) => {
       const scriptPath = path.join(process.cwd(), 'scripts', 'job_scraper.py');
       this.logger.log('Running Python job scraper...');
 
       // Try `python` first (Windows default), fall back to `python3`
       const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
-      const child = spawn(pythonCmd, [scriptPath], {
+      const args = tempFilePath ? [scriptPath, tempFilePath] : [scriptPath];
+      
+      const child = spawn(pythonCmd, args, {
         cwd: process.cwd(),
         stdio: ['ignore', 'pipe', 'pipe'],
       });

@@ -4,6 +4,7 @@ import { GreenhouseProvider } from './providers/greenhouse.provider';
 import { LeverProvider } from './providers/lever.provider';
 import { SmartRecruitersProvider } from './providers/smartrecruiters.provider';
 import { UniversalProvider } from './providers/universal.provider';
+import { ResumeParserService } from './resume-parser.service';
 
 @Module({
   providers: [
@@ -11,8 +12,9 @@ import { UniversalProvider } from './providers/universal.provider';
     GreenhouseProvider, 
     LeverProvider, 
     SmartRecruitersProvider,
-    UniversalProvider
+    UniversalProvider,
+    ResumeParserService
   ],
-  exports: [ScraperService],
+  exports: [ScraperService, ResumeParserService, UniversalProvider],
 })
 export class ScraperModule {}

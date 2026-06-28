@@ -14,9 +14,9 @@ export class ScraperService {
     private readonly universalProvider: UniversalProvider,
   ) {}
 
-  async scrapeAll(): Promise<Job[]> {
+  async scrapeAll(tempFilePath?: string): Promise<Job[]> {
     // 1. External/Deep Search Scraping (LinkedIn, Internshala, etc. via Python)
-    const jobs = await this.universalProvider.fetchJobs();
+    const jobs = await this.universalProvider.fetchJobs(tempFilePath);
 
     // Deduplicate by ID
     const uniqueJobs = Array.from(

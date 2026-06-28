@@ -2,8 +2,11 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ScraperService } from '../scraper/scraper.service';
 import { MatchingService } from '../matching/matching.service';
 import { MailService } from '../mail/mail.service';
-import { JsonStorageUtil } from '../common/utils/json-storage.util';
+import { ResumeParserService } from '../scraper/resume-parser.service';
 import { Job, MatchedJob, UserProfile } from '../common/interfaces/job.interface';
+import * as fs from 'fs';
+import * as path from 'path';
+import { randomUUID } from 'crypto';
 
 @Injectable()
 export class JobsService {
@@ -13,11 +16,30 @@ export class JobsService {
     private readonly scraperService: ScraperService,
     private readonly matchingService: MatchingService,
     private readonly mailService: MailService,
+    private readonly resumeParserService: ResumeParserService,
   ) {}
 
-  async fetchAndMatchJobs(userEmail?: string, userName?: string): Promise<{ message?: string; jobs: MatchedJob[] }> {
+  async fetchAndMatchJobs(
+    resumeFile: Express.Multer.File,
+    userEmail?: string,
+    userName?: string
+  ): Promise<{ message?: string; jobs: MatchedJob[] }> {
+    let tempFilePath = '';
+    
     try {
-      this.logger.log(`Starting job aggregation process for ${userEmail || 'unknown'}...`);
+      this.logger.log(`Starting dynamic job aggregation process for ${userEmail || 'unknown'}...`);
+
+      // 1. Parse Resume Dynamically
+      const userProfile = await this.resumeParserService.parseResume(resumeFile.buffer, userEmail, userName);
+      
+      // 2. Save profile to a temporary JSON file for the Python script
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir, { recursive: true });
+      }
+      const uniqueId = randomUUID();
+      tempFilePath = path.join(dataDir, `user-profile-${uniqueId}.json`);
+      fs.writeFileSync(tempFilePath, JSON.stringify(userProfile, null, 2), 'utf-8');
 
       // Fallback 60s timeout in case Python script hangs completely
       let timeoutHandle: NodeJS.Timeout;
@@ -28,9 +50,9 @@ export class JobsService {
         }, 60000);
       });
 
-      // 1. Run live scrape
+      // 3. Run live scrape passing the temp file path
       const freshJobs = await Promise.race([
-        this.scraperService.scrapeAll(),
+        this.scraperService.scrapeAll(tempFilePath),
         timeoutPromise
       ]);
       
@@ -42,7 +64,7 @@ export class JobsService {
         return { message: "No jobs found in that 60 sec for that resume.", jobs: [] };
       }
 
-      // 2. Deduplicate within this batch to avoid showing the exact same job twice
+      // 4. Deduplicate within this batch to avoid showing the exact same job twice
       const uniqueJobs: Job[] = [];
       const uniqueIdsInThisBatch = new Set<string>();
 
@@ -53,20 +75,14 @@ export class JobsService {
         }
       }
 
-      // 3. Load user profile
-      const userProfile = await JsonStorageUtil.readData<UserProfile>('user-profile.json');
-      if (!userProfile) {
-        return { message: "User profile not found. Please upload a resume.", jobs: [] };
-      }
-
-      // 4. Match jobs
+      // 5. Match jobs
       const matchedJobs = this.matchingService.matchJobs(uniqueJobs, userProfile);
       
       if (matchedJobs.length === 0) {
         return { message: "No jobs found in that 60 sec for that resume.", jobs: [] };
       }
 
-      // 7. Send email
+      // 6. Send email
       if (matchedJobs.length > 0) {
         const finalEmail = userEmail || userProfile.personalInfo.email;
         const finalName = userName || userProfile.personalInfo.name;
@@ -82,6 +98,15 @@ export class JobsService {
     } catch (error) {
       this.logger.error('Error in fetchAndMatchJobs:', error.stack);
       throw error;
+    } finally {
+      // 7. Cleanup the temporary profile JSON
+      if (tempFilePath && fs.existsSync(tempFilePath)) {
+        try {
+          fs.unlinkSync(tempFilePath);
+        } catch (e) {
+          this.logger.warn(`Failed to cleanup temp profile: ${e.message}`);
+        }
+      }
     }
   }
 }
