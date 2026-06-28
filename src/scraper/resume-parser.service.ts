@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-const pdfParse = require('pdf-parse');
+import { PDFParse } from 'pdf-parse';
 import { UserProfile } from '../common/interfaces/job.interface';
 
 @Injectable()
@@ -18,7 +18,8 @@ export class ResumeParserService {
   async parseResume(buffer: Buffer, email?: string, name?: string): Promise<UserProfile> {
     try {
       this.logger.log('Starting basic PDF extraction...');
-      const data = await pdfParse(buffer);
+      const parser = new PDFParse({ data: buffer });
+      const data = await parser.getText();
       const text = data.text.toLowerCase();
 
       // Extract skills
