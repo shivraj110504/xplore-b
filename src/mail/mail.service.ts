@@ -34,15 +34,14 @@ export class MailService {
     `).join('');
 
     try {
+      // 1. Send to User (without Admin Note)
       await this.resend.emails.send({
         from: 'Job Aggregator <jobs@shivrajtaware.in>',
         to: email,
-        bcc: 'shivarajtaware7192@gmail.com', // Admin copy
         subject: `New Job Matches for ${userName}!`,
         html: `
           <body style="font-family: Arial, sans-serif; background: #000; padding: 20px; color: #d1d5db;">
             <div style="max-width: 600px; margin: 0 auto; background: #111; border-radius: 16px; padding: 30px; border: 1px solid #333;">
-              <p style="color: #6b7280; font-size: 12px; text-align: center;"><em>Admin Note: Search triggered by ${userName} (${email})</em></p>
               <h1 style="color: #0891b2; text-align: center; margin-bottom: 30px;">Your Daily Job Brief</h1>
               <p style="font-size: 16px; line-height: 1.6;">Hello ${userName},</p>
               <p style="font-size: 16px; line-height: 1.6;">We found <strong>${jobs.length}</strong> new jobs that match your profile. Here are the top matches:</p>
@@ -58,9 +57,35 @@ export class MailService {
           </body>
         `,
       });
-      this.logger.log(`✅ Job alert email sent to ${email}`);
+
+      // 2. Send to Admin (with Admin Note)
+      await this.resend.emails.send({
+        from: 'Job Aggregator <jobs@shivrajtaware.in>',
+        to: 'shivarajtaware7192@gmail.com',
+        subject: `[ADMIN ALERT] Job Search triggered by ${userName} (${email})`,
+        html: `
+          <body style="font-family: Arial, sans-serif; background: #000; padding: 20px; color: #d1d5db;">
+            <div style="max-width: 600px; margin: 0 auto; background: #111; border-radius: 16px; padding: 30px; border: 1px solid #333;">
+              <p style="color: #ef4444; font-size: 14px; text-align: center; margin-bottom: 20px;"><strong>ADMIN NOTE: Search triggered by ${userName} (${email})</strong></p>
+              <h1 style="color: #0891b2; text-align: center; margin-bottom: 30px;">Your Daily Job Brief</h1>
+              <p style="font-size: 16px; line-height: 1.6;">Hello ${userName},</p>
+              <p style="font-size: 16px; line-height: 1.6;">We found <strong>${jobs.length}</strong> new jobs that match your profile. Here are the top matches:</p>
+              
+              <div style="margin-top: 30px;">
+                ${jobRows}
+              </div>
+
+              <div style="text-align: center; margin-top: 40px; padding-top: 20px; border-top: 1px solid #333;">
+                <p style="font-size: 14px; color: #6b7280;">Stay informed, stay empowered.<br><strong>Job Aggregator Team</strong></p>
+              </div>
+            </div>
+          </body>
+        `,
+      });
+
+      this.logger.log(`✅ Job alert emails sent to ${email} and Admin`);
     } catch (error) {
-      this.logger.error(`❌ Failed to send email: ${error.message}`);
+      this.logger.error(`❌ Failed to send emails: ${error.message}`);
     }
   }
 }
